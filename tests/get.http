@@ -1,0 +1,2 @@
+GET https://92ccmddbq2.execute-api.us-east-2.amazonaws.com/dev/notes
+x-api-key: super-secret-api-key-dev

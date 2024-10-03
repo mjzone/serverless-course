@@ -1,0 +1,8 @@
+POST https://92ccmddbq2.execute-api.us-east-2.amazonaws.com/dev/notes
+content-type: application/json
+
+{
+    "notesId": "002",
+    "title": "Magna adipisicing cupidatat sit nostrud consequat amet proident dolor velit Lorem eiusmod anim.",
+    "body": "Aliqua veniam tempor excepteur sunt qui consequat ullamco amet esse esse eu sit duis tempor. Eiusmod do non dolore nisi ad veniam sint occaecat tempor officia consectetur. Non reprehenderit anim est et in consectetur nostrud do incididunt aliquip irure veniam et irure."
+}

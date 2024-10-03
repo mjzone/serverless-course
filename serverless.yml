@@ -1,0 +1,96 @@
+service: notes-crud-api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-2
+  stage: ${opt:stage, 'dev'}
+  apiGateway:
+    apiKeys:
+      - name: api-key-${self:provider.stage}
+        value: super-secret-api-key-${self:provider.stage}
+    usagePlan:
+      quota:
+        limit: 10
+        offset: 0
+        period: DAY
+      throttle:
+        burstLimit: 200
+        rateLimit: 100
+  environment:
+    NOTES_TABLE_NAME: !Ref notesTable
+
+plugins:
+  - serverless-iam-roles-per-function
+
+functions:
+  createNote:
+    handler: handler.createNote
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Resource: !GetAtt notesTable.Arn
+        Action: 'dynamodb:PutItem'
+    events:
+      - http:
+          method: post
+          path: notes
+
+  updateNote:
+    handler: handler.updateNote
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Resource: !GetAtt notesTable.Arn
+        Action: 'dynamodb:UpdateItem'
+    events:
+      - http:
+          method: put
+          path: notes/{id}
+
+  deleteNote:
+    handler: handler.deleteNote
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Resource: !GetAtt notesTable.Arn
+        Action: 'dynamodb:DeleteItem'
+    events:
+      - http:
+          method: delete
+          path: notes/{id}
+
+  getAllNotes:
+    handler: handler.getAllNotes
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Resource: !GetAtt notesTable.Arn
+        Action: 'dynamodb:Scan'
+    events:
+      - http:
+          method: get
+          path: notes
+          private: true
+
+  getNoteById:
+    handler: handler.getNoteById
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Resource: !GetAtt notesTable.Arn
+        Action: 'dynamodb:GetItem'
+    events:
+      - http:
+          method: get
+          path: notes/{id}
+
+resources:
+  Resources:
+    notesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        TableName: notes
+        KeySchema: 
+          - AttributeName: notesId
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: notesId
+            AttributeType: S
