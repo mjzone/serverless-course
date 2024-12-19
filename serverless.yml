@@ -11,13 +11,13 @@ provider:
       - name: api-key-${self:provider.stage}
         value: super-secret-api-key-${self:provider.stage}
     usagePlan:
-      quota:
-        limit: 10
-        offset: 0
-        period: DAY
       throttle:
-        burstLimit: 200
+        burstLimit: 10
         rateLimit: 100
+      quota:
+        limit: 100
+        period: DAY
+        offset: 0
   environment:
     NOTES_TABLE_NAME: !Ref notesTable
 
